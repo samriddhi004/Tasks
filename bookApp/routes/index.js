@@ -1,39 +1,16 @@
 var express = require('express');
 var router = express.Router();
 const Book = require('../model/book');
+const { ObjectId } = require('mongodb');
+
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  // const books = [
-  //   {
-  //     _id : 1,
-  //     name:"Fermat's Engima",
-  //     description:"This is a really great book",
-  //     author:"Simone"
-  //   },
-  //   {
-  //     _id : 2,
-  //     name:"1984",
-  //     description:"This is an awesome dystopian science fiction. A must read",
-  //     author:"George Orwell"
-  //   },
-  //   {
-  //     _id : 3,
-  //     name:"Evil Under the Sun",
-  //     description:"This is a great murder mystery.",
-  //     author:"Agatha Christie"
-  //   },
-  //   {
-  //     _id : 4,
-  //     name:"Book 3",
-  //     description:"this is book 1",
-  //     author:"Author 1"
-  //   },
-  // ]
+
     try{
       const books = await Book.find();
-      res.render("index",{title:"title",bookList : books})
-      res.json(books);
+      res.render("index",{title:"BookApp",bookList : books})
+      // res.json(books);
     }catch(err){
       console.log(err);
     }
@@ -56,17 +33,41 @@ router.post('/save',async function(req, res, next) {
   }
   res.redirect("/");
 });
+router.get('/edit/:id',async function(req, res, next) {
+  try{
+    const bookId = req.params.id;
+    const book = await Book.findById(bookId);
+    res.render('edit-books',{book});
+  }catch(err){
+    console.log(err);
+  }
+});
+
+// Route to update book details
+router.post('/update/:id', async function(req, res, next) {
+  try {
+    const bookId = req.params.id;
+    const updatedData = req.body; // Get the updated data from the form
+    await Book.findByIdAndUpdate(bookId, updatedData, { new: true }); // Update the book
+    res.redirect("/"); // Redirect to the home page after updating
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error updating book.");
+  }
+});
+
 
 
 router.post('/delete/:id',async function(req, res, next) {
   try{
    const bookId = req.params.id;
-   await Book.findByIdAndDelete(new isObjectIdOrHexString(bookId));
+   console.log('Attempting to delete book with ID:', bookId); // Debug log
+   await Book.findByIdAndDelete(new ObjectId(bookId));
    res.redirect("/");
   }catch(err){
    console.log(err); 
+   res.status(500).send("Error deleting book.");
   }
-  
 });
  
  
