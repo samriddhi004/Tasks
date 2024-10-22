@@ -1,0 +1,16 @@
+body {
+  margin: 2rem auto;
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: rgb(226, 35, 35);
+}
+
+.btn btn-primary{
+  color:black;
+}
+.card{
+  display: block;
+}
